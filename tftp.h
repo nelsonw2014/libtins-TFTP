@@ -57,25 +57,25 @@ namespace Tins {
 
         void write_serialization(uint8_t *data, uint32_t sz, const PDU *parent);
 
-        OpCodes get_opcode() const { return _opcode; }
+        OpCodes opcode() const { return _opcode; }
 
-        void set_opcode(OpCodes opcode) { _opcode = opcode; }
+        void opcode(OpCodes opcode) { _opcode = opcode; }
 
-        ErrorCodes get_error_code() const { return _error_code; }
+        ErrorCodes error_code() const { return _error_code; }
 
-        void set_error_code(ErrorCodes error_code) { _error_code = error_code; }
+        void error_code(ErrorCodes error_code) { _error_code = error_code; }
 
-        Modes get_mode() const { return _mode; }
+        Modes mode() const { return _mode; }
 
-        void set_mode(Modes mode) { _mode = mode; }
+        void mode(Modes mode) { _mode = mode; }
 
-        const std::string get_filename() const { return _filename; }
+        const std::string filename() const { return _filename; }
 
-        void set_filename(const std::string &filename) { _filename = filename; }
+        void filname(const std::string &filename) { _filename = filename; }
 
-        const std::string get_error() const { return _error; }
+        const std::string error() const { return _error; }
 
-        void set_error(const std::string &error) { _error = error; }
+        void error(const std::string &error) { _error = error; }
 
         Option search_option(const std::string &option_field) const;
 

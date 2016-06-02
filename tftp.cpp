@@ -8,7 +8,7 @@ using namespace Tins;
 
 
 uint32_t TFTP::header_size() const {
-    if (_opcode == NONE) return 0;
+    if (_opcode == NONE || _opcode > OPT_ACKNOWLEDGEMENT) return 0;
     uint32_t size = 2;
     if (_opcode == READ_REQUEST || _opcode == WRITE_REQUEST) {
         size += _filename.length() + 1;
@@ -29,10 +29,7 @@ uint32_t TFTP::header_size() const {
 }
 
 void TFTP::write_serialization(uint8_t *data, uint32_t sz, const PDU *parent) {
-    for (auto i = 0; i < sz; i++) {
-        data[i] = 255;
-        // TODO: Build out serialization
-    }
+    // TODO: Build out serialization
 }
 
 TFTP::Option TFTP::search_option(const std::string &option_field) const {
