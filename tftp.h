@@ -95,8 +95,6 @@ namespace Tins {
 
     };
 
-    std::string read_until_deliminator(Memory::InputMemoryStream &stream, const uint8_t delim = 0);
-
 }
 
 

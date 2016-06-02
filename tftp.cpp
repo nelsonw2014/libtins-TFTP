@@ -7,6 +7,21 @@
 
 using namespace Tins;
 
+
+std::string read_until_deliminator(Memory::InputMemoryStream &stream, const uint8_t delim = 0) {
+    std::string return_string;
+    uint8_t buff;
+    while (stream.can_read(1)) {
+        stream.read(buff);
+        return_string.push_back(buff);
+        if (*(return_string.end()) == 0) {
+            return_string.pop_back();
+            break;
+        }
+    }
+    return return_string;
+}
+
 TFTP::TFTP(const uint8_t *data, uint32_t sz) {
     Memory::InputMemoryStream stream(data, sz);
     stream.read(_opcode);
@@ -110,18 +125,4 @@ bool TFTP::delete_option(const std::string &option_field) {
         }
     }
     throw option_not_found();
-}
-
-std::string read_until_deliminator(Memory::InputMemoryStream &stream, const uint8_t delim = 0) {
-    std::string return_string;
-    uint8_t buff;
-    while (stream.can_read(1)) {
-        stream.read(buff);
-        return_string.push_back(buff);
-        if (*(return_string.end()) == 0) {
-            return_string.pop_back();
-            break;
-        }
-    }
-    return return_string;
 }
