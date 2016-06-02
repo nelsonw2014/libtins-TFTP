@@ -69,6 +69,10 @@ namespace Tins {
 
         void mode(Modes mode) { _mode = mode; }
 
+        uint16_t block() const { return _block; }
+
+        void block(uint16_t block) { _block = block; }
+
         const std::string filename() const { return _filename; }
 
         void filname(const std::string &filename) { _filename = filename; }
@@ -88,6 +92,7 @@ namespace Tins {
         ErrorCodes _error_code;
         Modes _mode;
 
+        uint16_t _block;
         std::string _filename;
         std::string _error;
 
