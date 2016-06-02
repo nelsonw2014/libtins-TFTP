@@ -23,9 +23,10 @@ namespace Tins {
         };
 
         enum Modes {
-            NETASCII = 1,
-            OCTET = 2,
-            MAIL = 3
+            NETASCII = 8,
+            OCTET = 5,
+            MAIL = 4
+            // Using the enum values as sizes of the addition to the header
         };
 
         enum ErrorCodes : uint16_t {
@@ -36,52 +37,24 @@ namespace Tins {
             ILLEGAL_OPERATION = 4,
             UNKNOWN_XID = 5,
             FILE_EXISTS = 6,
-            NO_SUCH_USER = 7
+            NO_SUCH_USER = 7,
+            OPTION_ERROR = 8
         };
 
         typedef std::pair<std::string, std::string> Option;
 
-        /*
-         * Unique protocol identifier. For user-defined PDUs, you **must**
-         * use values greater or equal to PDU::USER_DEFINED_PDU;
-         */
         static const PDU::PDUType pdu_flag = PDU::USER_DEFINED_PDU;
 
-
-/*
-         * Constructor from _buffer. This constructor will be called while
-         * sniffing packets, whenever a PDU of this type is found.
-         *
-         * The "data" parameter points to a _buffer of length "sz".
-         */
         TFTP() { }
 
         TFTP(const uint8_t *data, uint32_t sz);
 
-        /*
-         * Clones the PDU. This method is used when copying PDUs.
-         */
         TFTP *clone() const { return new TFTP(*this); }
 
-        /*
-         * Retrieves the size of this PDU.
-         */
         uint32_t header_size() const;
 
-        /*
-         * This method must return pdu_flag.
-         */
         PDUType pdu_type() const { return pdu_flag; }
 
-        /*
-         * Serializes the PDU. The serialization output should be written
-         * to the _buffer pointed to by "data", which is of size "sz". The
-         * "sz" parameter will be equal to the value returned by
-         * TFTP::header_size.
-         *
-         * The third parameter is a pointer to the parent PDU. You shouldn't
-         * normally need to use this.
-         */
         void write_serialization(uint8_t *data, uint32_t sz, const PDU *parent);
 
         OpCodes get_opcode() const { return _opcode; }
@@ -100,6 +73,10 @@ namespace Tins {
 
         void set_filename(const std::string &filename) { _filename = filename; }
 
+        const std::string get_error() const { return _error; }
+
+        void set_error(const std::string &error) { _error = error; }
+
         Option search_option(const std::string &option_field) const;
 
         bool add_option(const Option &new_option);
@@ -112,7 +89,10 @@ namespace Tins {
         Modes _mode;
 
         std::string _filename;
+        std::string _error;
+
         std::vector<Option> _options;
+        std::vector<uint8_t> _data;
 
 
     };

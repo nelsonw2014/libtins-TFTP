@@ -10,7 +10,21 @@ using namespace Tins;
 uint32_t TFTP::header_size() const {
     if (_opcode == NONE) return 0;
     uint32_t size = 2;
-    // TODO: Build out size calculation
+    if (_opcode == READ_REQUEST || _opcode == WRITE_REQUEST) {
+        size += _filename.length() + 1;
+        size += (uint32_t) _mode + 1;
+    } else if (_opcode == DATA) {
+        size += 2 + _data.size();
+    } else if (_opcode == ACKNOWLEDGEMENT) {
+        size += 2;
+    } else if (_opcode == ERROR) {
+        size += 2 + _error.length() + 1;
+    }
+    if ((_opcode == READ_REQUEST || _opcode == WRITE_REQUEST || _opcode == OPT_ACKNOWLEDGEMENT) && !_options.empty()) {
+        for (auto &option: _options) {
+            size += option.first.length() + 1 + option.second.length() + 1;
+        }
+    }
     return size;
 }
 
