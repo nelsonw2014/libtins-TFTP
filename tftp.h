@@ -22,13 +22,6 @@ namespace Tins {
             OPT_ACKNOWLEDGEMENT = 6
         };
 
-        enum Modes {
-            NETASCII = 8,
-            OCTET = 5,
-            MAIL = 4
-            // Using the enum values as sizes of the addition to the header
-        };
-
         enum ErrorCodes : uint16_t {
             UNDEFINED = 0,
             FILE_NOT_FOUND = 1,
@@ -65,10 +58,6 @@ namespace Tins {
 
         void error_code(ErrorCodes error_code) { _error_code = error_code; }
 
-        Modes mode() const { return _mode; }
-
-        void mode(Modes mode) { _mode = mode; }
-
         uint16_t block() const { return _block; }
 
         void block(uint16_t block) { _block = block; }
@@ -76,6 +65,10 @@ namespace Tins {
         const std::string filename() const { return _filename; }
 
         void filname(const std::string &filename) { _filename = filename; }
+
+        std::string mode() const { return _mode; }
+
+        void mode(std::string mode) { _mode = mode; }
 
         const std::string error() const { return _error; }
 
@@ -90,10 +83,10 @@ namespace Tins {
     private:
         OpCodes _opcode;
         ErrorCodes _error_code;
-        Modes _mode;
 
         uint16_t _block;
         std::string _filename;
+        std::string _mode;
         std::string _error;
 
         std::vector<Option> _options;
@@ -101,6 +94,9 @@ namespace Tins {
 
 
     };
+
+    std::string read_until_deliminator(Memory::InputMemoryStream &stream, const uint8_t delim = 0);
+
 }
 
 
