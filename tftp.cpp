@@ -1,8 +1,9 @@
 //
 // Created by warnelso on 6/1/16.
 //
-#include <tins/memory_helpers.h>
 #include "tftp.h"
+
+#include <tins/memory_helpers.h>
 
 using namespace Tins;
 
