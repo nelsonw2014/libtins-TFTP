@@ -23,9 +23,9 @@ Example (mostly) taken from [PXESim](https://github.com/nelsonw2014/PXESim)
 
 // create layer2 tftp read request packet
 const Tins::EthernetII create_tftp_read() {
-    Tins::EthernetII eth(this->_tftp_hw_address, this->_client_hw_address);
-    auto *ip = new Tins::IP(this->_tftp_server_address, this->_dhcp_client_address);
-    auto *udp = new Tins::UDP(69, 1024);
+    Tins::EthernetII eth("00:00:de:ad:be:ef", "00:00:B1:6B:00:B5");
+    auto *ip = new Tins::IP("8.8.8.8", "127.0.0.1");
+    auto *udp = new Tins::UDP(69, 1337);
     auto *tftp = new Tins::TFTP();
     tftp->opcode(TFTP::READ_REQUEST);
     tftp->mode("octet");
