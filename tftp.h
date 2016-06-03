@@ -64,7 +64,7 @@ namespace Tins {
 
         const std::string filename() const { return _filename; }
 
-        void filname(const std::string &filename) { _filename = filename; }
+        void filename(const std::string &filename) { _filename = filename; }
 
         std::string mode() const { return _mode; }
 
@@ -94,6 +94,7 @@ namespace Tins {
 
 
     };
+
 
 }
 

@@ -7,6 +7,9 @@
 
 using namespace Tins;
 
+const uint16_t change_endian(const uint16_t orig) {
+    return ((orig & 0x00ff) << 8) | ((orig & 0xff00) >> 8);
+}
 
 std::string read_until_deliminator(Memory::InputMemoryStream &stream, const uint8_t delim = 0) {
     std::string return_string;
@@ -14,7 +17,7 @@ std::string read_until_deliminator(Memory::InputMemoryStream &stream, const uint
     while (stream.can_read(1)) {
         stream.read(buff);
         return_string.push_back(buff);
-        if (*(return_string.end()) == 0) {
+        if (*(return_string.end() - 1) == '\0') {
             return_string.pop_back();
             break;
         }
@@ -24,24 +27,30 @@ std::string read_until_deliminator(Memory::InputMemoryStream &stream, const uint
 
 TFTP::TFTP(const uint8_t *data, uint32_t sz) {
     Memory::InputMemoryStream stream(data, sz);
-    stream.read(_opcode);
+    uint16_t buff;
+    stream.read(buff);
+    _opcode = (OpCodes) change_endian(buff);
     if (_opcode == NONE || _opcode > OPT_ACKNOWLEDGEMENT) throw malformed_packet();
     if (_opcode == READ_REQUEST || _opcode == WRITE_REQUEST) {
         _filename = read_until_deliminator(stream);
         _mode = read_until_deliminator(stream);
     } else if (_opcode == DATA) {
-        stream.read(_block);
+        stream.read(buff);
+        _block = change_endian(buff);
         _data.resize(sz - 4);
         stream.read(_data, sz - 4);
     } else if (_opcode == ACKNOWLEDGEMENT) {
-        stream.read(_block);
+        stream.read(buff);
+        _block = change_endian(buff);
     } else if (_opcode == ERROR) {
-        stream.read(_error_code);
+        stream.read(buff);
+        _error_code = (ErrorCodes) change_endian(buff);
         _error = read_until_deliminator(stream);
     }
-    if ((_opcode == READ_REQUEST || _opcode == WRITE_REQUEST || _opcode == OPT_ACKNOWLEDGEMENT) && !_options.empty()) {
+    if (_opcode == READ_REQUEST || _opcode == WRITE_REQUEST || _opcode == OPT_ACKNOWLEDGEMENT) {
         while (stream.can_read(4)) {
-            _options.push_back(std::make_pair(read_until_deliminator(stream), read_until_deliminator(stream)));
+            const std::string first = read_until_deliminator(stream); // arguments read from rear to front...
+            _options.push_back(std::make_pair(first, read_until_deliminator(stream)));
         }
     }
 
@@ -71,19 +80,19 @@ uint32_t TFTP::header_size() const {
 void TFTP::write_serialization(uint8_t *data, uint32_t sz, const PDU *parent) {
     if (header_size()) {
         Memory::OutputMemoryStream stream(data, sz);
-        stream.write((uint16_t) _opcode);
+        stream.write(change_endian(_opcode));
         if (_opcode == READ_REQUEST || _opcode == WRITE_REQUEST) {
             stream.write((const uint8_t *) _filename.data(), _filename.size());
             stream.write((uint8_t) 0);
             stream.write((const uint8_t *) _mode.data(), _mode.size());
             stream.write((uint8_t) 0);
         } else if (_opcode == DATA) {
-            stream.write(_block);
+            stream.write(change_endian(_block));
             stream.write(_data.data(), _data.size());
         } else if (_opcode == ACKNOWLEDGEMENT) {
-            stream.write(_block);
+            stream.write(change_endian(_block));
         } else if (_opcode == ERROR) {
-            stream.write((uint16_t) _error_code);
+            stream.write(change_endian(_error_code));
             stream.write((const uint8_t *) _error.data(), _error.size());
             stream.write((uint8_t) 0);
         }
