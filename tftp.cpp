@@ -49,8 +49,10 @@ TFTP::TFTP(const uint8_t *data, uint32_t sz) {
     }
     if (_opcode == READ_REQUEST || _opcode == WRITE_REQUEST || _opcode == OPT_ACKNOWLEDGEMENT) {
         while (stream.can_read(4)) {
-            const std::string first = read_until_deliminator(stream); // arguments read from rear to front...
-            _options.push_back(std::make_pair(first, read_until_deliminator(stream)));
+            _options.push_back({
+                                       read_until_deliminator(stream),
+                                       read_until_deliminator(stream)
+                               });
         }
     }
 
