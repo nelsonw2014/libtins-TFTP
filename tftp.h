@@ -84,6 +84,10 @@ namespace Tins {
 
         void block(uint16_t block) { _block = block; }
 
+        const uint8_t *data() const { return _data.data(); }
+
+        void data(std::vector<uint8_t>::const_iterator begin, std::vector<uint8_t>::const_iterator end);
+
         const std::string filename() const { return _filename; }
 
         void filename(const std::string &filename) { _filename = filename; }

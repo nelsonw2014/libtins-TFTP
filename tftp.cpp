@@ -133,6 +133,10 @@ void TFTP::write_serialization(uint8_t *data, uint32_t sz, const PDU *parent) {
     }
 }
 
+void TFTP::data(std::vector<uint8_t>::const_iterator begin, std::vector<uint8_t>::const_iterator end) {
+    _data.assign(begin, end);
+}
+
 TFTP::Option TFTP::search_option(const std::string &option_field) const {
     for (auto &option: _options) {
         if (option.first == option_field) return option;
